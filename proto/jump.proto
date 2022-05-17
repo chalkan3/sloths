@@ -1,0 +1,13 @@
+syntax = "proto3";
+option go_package = "/pb";
+
+package pb;
+
+
+message JumpRequest {
+    int32 pos = 1;
+    message Sloth {
+        string name = 1;
+    }
+}
+
