@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 
 	"chalkan.github.com/internal/jump"
@@ -29,7 +30,20 @@ func main() {
 		os.Exit(1)
 	}
 
-	svc := jump.NewLoggerMW(logger, jump.NewService(logger))
+	svc := jump.NewInstrumentingMiddleware(
+		jump.NewMetrics(),
+		jump.NewLoggerMW(logger, jump.NewService(logger)),
+	)
+
+	logger.Log(
+		"service name", "Jump",
+		"msg", "HTTP",
+		"addr", "9001",
+		"prom-path", "/metrics")
+
+	routes := jump.NewHTTPServer(svc, logger)
+
+	go http.ListenAndServe(":9001", routes)
 	jump.SubscriberTransport(svc, nc.GetConn())
 
 }
