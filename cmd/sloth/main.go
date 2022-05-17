@@ -33,7 +33,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	svc := sloth.NewLogMW(logger, sloth.NewService(sloth.NewRepository(), nc.GetConn()))
+	svc := sloth.NewLogMW(logger, sloth.NewService(sloth.NewRepository(), nc.GetConn(), sloth.NewEvents()))
 
 	routes := sloth.NewHTTPServer(svc, logger)
 

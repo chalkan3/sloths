@@ -18,7 +18,7 @@ func NewLoggerMW(logger log.Logger, next Service) *loggerMW {
 	}
 }
 
-func (mw *loggerMW) Dance(request DanceBalletRequest) error {
+func (mw *loggerMW) Dance(request DanceBalletEvent) error {
 	defer func(begin time.Time) {
 		_ = mw.logger.Log(
 			"method", "Dance Ballet",

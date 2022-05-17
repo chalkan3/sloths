@@ -5,13 +5,13 @@ import (
 )
 
 type Service interface {
-	Jump(jumpRequest JumpRequest) error
+	Jump(jumpRequest JumpEvent) error
 }
 
 type service struct {
 }
 
-func (s *service) Jump(jumpRequest JumpRequest) error {
+func (s *service) Jump(jumpRequest JumpEvent) error {
 	return nil
 }
 

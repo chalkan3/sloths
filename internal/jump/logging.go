@@ -18,7 +18,7 @@ func NewLoggerMW(logger log.Logger, next Service) *loggerMW {
 	}
 }
 
-func (mw *loggerMW) Jump(jumpRequest JumpRequest) error {
+func (mw *loggerMW) Jump(jumpRequest JumpEvent) error {
 	defer func(begin time.Time) {
 		_ = mw.logger.Log(
 			"method", "Jump",

@@ -29,7 +29,7 @@ func SubscriberTransport(svc Service, nc *nats.Conn) error {
 }
 
 func decodeDanceBalletRequest(_ context.Context, msg *nats.Msg) (interface{}, error) {
-	var request DanceBalletRequest
+	var request DanceBalletEvent
 
 	if err := json.Unmarshal(msg.Data, &request); err != nil {
 		return nil, err

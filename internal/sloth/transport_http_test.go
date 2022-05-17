@@ -15,7 +15,7 @@ func TestHTTP(t *testing.T) {
 	logger = log.NewLogfmtLogger(os.Stderr)
 	logger = log.With(logger, "listen", "8081", "caller", log.DefaultCaller)
 
-	svc := NewService(NewRepository(), nil)
+	svc := NewService(NewRepository(), nil, nil)
 	r := NewHTTPServer(svc, logger)
 	srv := httptest.NewServer(r)
 

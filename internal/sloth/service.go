@@ -1,10 +1,6 @@
 package sloth
 
 import (
-	"encoding/json"
-
-	"chalkan.github.com/internal/ballet"
-	"chalkan.github.com/internal/jump"
 	"github.com/nats-io/nats.go"
 )
 
@@ -19,40 +15,21 @@ type Service interface {
 type service struct {
 	repository Repository
 	nc         *nats.Conn
+	events     *Events
 }
 
-func NewService(repository Repository, nc *nats.Conn) Service {
+func NewService(repository Repository, nc *nats.Conn, events *Events) Service {
 	return &service{
 		repository: repository,
 		nc:         nc,
+		events:     events,
 	}
 }
 
 func (s *service) Add(sloth *Sloth) *Sloth {
 	sloth = s.repository.Add(sloth)
-	var queue string
-	var event interface{}
-
-	if sloth.Name == "Maria" {
-		event = jump.JumpRequest{
-			Pos:  1,
-			Name: sloth.Name,
-		}
-		queue = "sloth"
-	}
-
-	if sloth.Name == "Lady" {
-		event = ballet.DanceBalletRequest{
-			Name:  sloth.Name,
-			Music: "classic",
-		}
-
-		queue = "sloth.dance.ballet"
-	}
-
-	marshalEvent, _ := json.Marshal(event)
-
-	s.nc.Publish(queue, marshalEvent)
+	event := s.events.GetByName(sloth.Name)
+	s.nc.Publish(event.GetQueue(), event.GetMessageMarshalled())
 	return sloth
 }
 

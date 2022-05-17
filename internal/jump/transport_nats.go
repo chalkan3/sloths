@@ -17,7 +17,7 @@ func SubscriberTransport(svc Service, nc *nats.Conn) error {
 		nt.EncodeJSONResponse,
 	)
 
-	_, err := nc.Subscribe("sloth", jumpSubscriberHandler.ServeMsg(nc))
+	_, err := nc.Subscribe("sloth.jump", jumpSubscriberHandler.ServeMsg(nc))
 	if err != nil {
 		return err
 	}
@@ -29,7 +29,7 @@ func SubscriberTransport(svc Service, nc *nats.Conn) error {
 }
 
 func decodeCountRequest(_ context.Context, msg *nats.Msg) (interface{}, error) {
-	var request JumpRequest
+	var request JumpEvent
 
 	if err := json.Unmarshal(msg.Data, &request); err != nil {
 		return nil, err
