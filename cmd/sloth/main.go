@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"chalkan.github.com/internal/database"
 	nats_cli "chalkan.github.com/internal/nats"
 	"chalkan.github.com/internal/sloth"
 
@@ -33,15 +34,22 @@ func main() {
 		os.Exit(1)
 	}
 
+	gorm, err := database.NewPostgresGORM("host=localhost user=postgres password=postgres dbname=sloth port=5432 sslmode=disable").Connect()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v", err)
+		os.Exit(1)
+	}
+
+	sloth.NewMigrations(gorm).Migrate()
+
 	svc := sloth.NewInstrumentingMiddleware(
 		sloth.NewMetrics(),
 		sloth.NewLogMW(
 			logger,
 			sloth.NewService(
-				sloth.NewRepository(),
+				sloth.NewRepository(gorm),
 				nc.GetConn(),
 				sloth.NewEvents())))
-
 	routes := sloth.NewHTTPServer(svc, logger)
 
 	logger.Log(

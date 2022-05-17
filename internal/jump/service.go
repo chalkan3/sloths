@@ -1,20 +1,20 @@
 package jump
 
-import (
-	"github.com/go-kit/log"
-)
-
 type Service interface {
 	Jump(jumpRequest JumpEvent) error
 }
 
 type service struct {
+	repository Repository
 }
 
 func (s *service) Jump(jumpRequest JumpEvent) error {
+	s.repository.Insert(jumpRequest)
 	return nil
 }
 
-func NewService(logger log.Logger) Service {
-	return new(service)
+func NewService(repository Repository) Service {
+	return &service{
+		repository: repository,
+	}
 }

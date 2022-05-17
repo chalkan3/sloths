@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 
+	"chalkan.github.com/internal/database"
 	"chalkan.github.com/internal/jump"
 	nats_cli "chalkan.github.com/internal/nats"
 	"github.com/go-kit/log"
@@ -30,9 +31,17 @@ func main() {
 		os.Exit(1)
 	}
 
+	gorm, err := database.NewPostgresGORM("host=localhost user=postgres password=postgres dbname=jump port=5433 sslmode=disable").Connect()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v", err)
+		os.Exit(1)
+	}
+
+	jump.NewMigrations(gorm).Migrate()
+
 	svc := jump.NewInstrumentingMiddleware(
 		jump.NewMetrics(),
-		jump.NewLoggerMW(logger, jump.NewService(logger)),
+		jump.NewLoggerMW(logger, jump.NewService(jump.NewRepository(gorm))),
 	)
 
 	logger.Log(
