@@ -9,3 +9,8 @@ scrape_configs:
   static_configs:
   - targets:
     - host.docker.internal:9001
+- job_name: sloth_dance_service
+  scrape_interval: 10s
+  static_configs:
+  - targets:
+    - host.docker.internal:9002

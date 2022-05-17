@@ -32,10 +32,8 @@ services:
     links:
       - cadvisor:cadvisor
       - alertmanager:alertmanager
-#      - pushgateway:pushgateway
     depends_on:
       - cadvisor
-#      - pushgateway
     networks:
       - back-tier
     restart: always
@@ -83,10 +81,6 @@ services:
     command:
       - '--config.file=/etc/alertmanager/config.yml'
       - '--storage.path=/alertmanager'
-#    deploy:
-#      placement:
-#        constraints:
-#          - node.hostname == ${HOSTNAME}
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor
@@ -102,3 +96,49 @@ services:
     restart: always
     deploy:
       mode: global
+
+  postgres-sloth:
+    image: postgres:14.1-alpine
+    container_name: postgres-sloth
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "sloth"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  postgres-jump:
+    image: postgres:14.1-alpine
+    container_name: postgres-jump
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: "jump"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  postgres-ballet:
+    image: postgres:14.1-alpine
+    container_name: postgres-ballet
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_DB: "ballet"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+

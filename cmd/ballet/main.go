@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 
 	"chalkan.github.com/internal/ballet"
@@ -29,7 +30,18 @@ func main() {
 		os.Exit(1)
 	}
 
-	svc := ballet.NewLoggerMW(logger, ballet.NewService())
+	svc := ballet.NewInstrumentingMiddleware(ballet.NewMetrics(), ballet.NewLoggerMW(logger, ballet.NewService()))
+
+	routes := ballet.NewHTTPServer()
+
+	logger.Log(
+		"service name", "Ballet",
+		"msg", "HTTP",
+		"addr", "9002",
+		"prom-path", "/metrics")
+
+	go http.ListenAndServe(":9002", routes)
+
 	ballet.SubscriberTransport(svc, nc.GetConn())
 
 }
