@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"chalkan.github.com/internal/jump"
+	"chalkan.github.com/internal/ballet"
 	nats_cli "chalkan.github.com/internal/nats"
 	"github.com/go-kit/log"
 )
@@ -29,8 +29,8 @@ func main() {
 		os.Exit(1)
 	}
 
-	svc := jump.NewLoggerMW(logger, jump.NewService(logger))
-	jump.SubscriberTransport(svc, nc.GetConn())
+	svc := ballet.NewLoggerMW(logger, ballet.NewService())
+	ballet.SubscriberTransport(svc, nc.GetConn())
 
 }
 

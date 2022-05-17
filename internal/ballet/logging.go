@@ -1,9 +1,9 @@
-package jump
+package ballet
 
 import (
 	"time"
 
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 )
 
 type loggerMW struct {
@@ -18,14 +18,14 @@ func NewLoggerMW(logger log.Logger, next Service) *loggerMW {
 	}
 }
 
-func (mw *loggerMW) Jump(jumpRequest JumpRequest) error {
+func (mw *loggerMW) Dance(request DanceBalletRequest) error {
 	defer func(begin time.Time) {
 		_ = mw.logger.Log(
-			"method", "Jump",
-			"type", "make a sloth jump",
+			"method", "Dance Ballet",
+			"type", "make a sloth dance ballet",
 			"took", time.Since(begin),
 		)
 	}(time.Now())
 
-	return mw.next.Jump(jumpRequest)
+	return mw.next.Dance(request)
 }

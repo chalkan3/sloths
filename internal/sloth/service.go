@@ -3,6 +3,7 @@ package sloth
 import (
 	"encoding/json"
 
+	"chalkan.github.com/internal/ballet"
 	"chalkan.github.com/internal/jump"
 	"github.com/nats-io/nats.go"
 )
@@ -29,14 +30,29 @@ func NewService(repository Repository, nc *nats.Conn) Service {
 
 func (s *service) Add(sloth *Sloth) *Sloth {
 	sloth = s.repository.Add(sloth)
-	event := jump.JumpRequest{
-		Pos:  1,
-		Name: sloth.Name,
+	var queue string
+	var event interface{}
+
+	if sloth.Name == "Maria" {
+		event = jump.JumpRequest{
+			Pos:  1,
+			Name: sloth.Name,
+		}
+		queue = "sloth"
+	}
+
+	if sloth.Name == "Lady" {
+		event = ballet.DanceBalletRequest{
+			Name:  sloth.Name,
+			Music: "classic",
+		}
+
+		queue = "sloth.dance.ballet"
 	}
 
 	marshalEvent, _ := json.Marshal(event)
 
-	s.nc.Publish("sloth", marshalEvent)
+	s.nc.Publish(queue, marshalEvent)
 	return sloth
 }
 
