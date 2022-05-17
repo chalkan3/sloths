@@ -9,6 +9,7 @@ import (
 	"github.com/go-kit/kit/log"
 	httptransport "github.com/go-kit/kit/transport/http"
 	"github.com/gorilla/mux"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func NewHTTPServer(svc Service, logger log.Logger) *mux.Router {
@@ -55,6 +56,7 @@ func NewHTTPServer(svc Service, logger log.Logger) *mux.Router {
 	r.Methods("DELETE").Path(Delete).Handler(removeHandler)
 	r.Methods("GET").Path(Get).Handler(getHandler)
 	r.Methods("GET").Path(List).Handler(listHandler)
+	r.Methods("GET").Path("/metrics").Handler(promhttp.Handler())
 
 	return r
 
